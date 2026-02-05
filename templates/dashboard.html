@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página do Código QR</title>
+
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+
+            /* ---- FUNDO PRETO ---- */
+            background: #000;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        h2, p {
+            color: white;
+        }
+
+        .btn {
+            padding: 12px 26px;
+            background: #d9c1ff;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 15px;
+            transition: 0.2s;
+            box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+            transform: scale(1.04);
+        }
+
+        /* ---- MODAL ---- */
+        .modal-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background: rgba(0, 0, 0, 0.55);
+            opacity: 0;
+            pointer-events: none;
+
+            backdrop-filter: blur(0px);
+            transition: opacity 0.35s ease, backdrop-filter 0.35s ease;
+        }
+
+        .modal-bg.show {
+            opacity: 1;
+            pointer-events: auto;
+            backdrop-filter: blur(12px);
+        }
+
+        .modal-box {
+            background: rgba(26, 26, 26, 0.88);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            width: 330px;
+
+            transform: scale(0.95);
+            opacity: 0;
+            transition: opacity 0.35s ease, transform 0.35s ease;
+
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-box.show {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .modal-box img {
+            width: 230px;
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        /* ---- FECHAR ---- */
+        .close-btn {
+            margin: 20px auto 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+
+            padding: 10px 22px;
+            background: #e4ceff;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.10);
+            transition: 0.25s ease;
+        }
+
+        .close-btn:hover {
+            background: #f0dcff;
+            transform: scale(1.05);
+        }
+
+        .close-icon {
+            font-size: 16px;
+            transition: 0.25s ease;
+        }
+
+        .close-btn:hover .close-icon {
+            transform: rotate(180deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Olá {{ user_name }}!</h2>
+    <p>Para confirmares a tua entrada, carrega no botão abaixo.</p>
+
+    <button class="btn" onclick="abrirModal()">Código QR</button>
+
+    <!-- MODAL -->
+    <div class="modal-bg" id="modal">
+        <div class="modal-box" id="modalBox">
+            <h2 style="color:white;">O teu QR Code</h2>
+            <p style="color:white;">Válido até: {{ expires }}</p>
+
+            <img src="{{ qr_data | safe }}" alt="QR Code">
+
+            <button class="close-btn" onclick="fecharModal()">
+                <span class="close-icon">✕</span>
+                Fechar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() {
+            const modal = document.getElementById("modal");
+            const box = document.getElementById("modalBox");
+
+            modal.classList.add("show");
+            setTimeout(() => {
+                box.classList.add("show");
+            }, 10);
+        }
+
+        function fecharModal() {
+            const modal = document.getElementById("modal");
+            const box = document.getElementById("modalBox");
+
+            box.classList.remove("show");
+            setTimeout(() => {
+                modal.classList.remove("show");
+            }, 200);
+        }
+
+        setTimeout(() => {
+            location.reload();
+        }, 5 * 60 * 1000);
+    </script>
+
+</body>
+</html>
