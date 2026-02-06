@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login/Registro</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"/>
+      <link rel="stylesheet" href="/static/style.css"/>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="form-section active" id="loginForm">
+        <h2>Login</h2>
+        <form method="POST" action="/login">
+          <input name="email" type="email" placeholder="Email" required />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+        <div class="toggle" onclick="toggleForm()">Crie uma conta</div>
+      </div>
+
+      <div class="form-section" id="registerForm">
+        <h2>Registro</h2>
+        <form method="POST" action="/register">
+
+          <input name="email" type="email" placeholder="Email" required />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            required
+          />
+          <button type="submit">Registro</button>
+        </form>
+        <div class="toggle" onclick="toggleForm()">Já tem uma conta? Entre</div>
+      </div>
+
+      <div id="popupSuccess" class="popup">
+  Registro realizado com sucesso! Agora faça login.
+</div>
+
+
+    <script>
+      window.addEventListener("DOMContentLoaded", () => {
+        document.documentElement.classList.add("fade-in");
+      });
+
+      function toggleForm() {
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+
+        loginForm.classList.remove("active");
+        registerForm.classList.remove("active");
+
+        setTimeout(() => {
+          if (loginForm.style.display !== "none") {
+            loginForm.style.display = "none";
+            registerForm.style.display = "block";
+            setTimeout(() => registerForm.classList.add("active"), 10);
+          } else {
+            registerForm.style.display = "none";
+            loginForm.style.display = "block";
+            setTimeout(() => loginForm.classList.add("active"), 10);
+          }
+        }, 300);
+      }
+    </script>
+
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    document.documentElement.classList.add("fade-in");
+
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    if (getQueryParam("success") === "true") {
+      const popup = document.getElementById("popupSuccess");
+      popup.classList.add("show");
+
+      setTimeout(() => {
+        popup.classList.remove("show");
+      }, 5000);
+
+      history.replaceState(null, "", window.location.pathname);
+    }
+  });
+</script>
+
+    </script>
+  </body>
+</html>
