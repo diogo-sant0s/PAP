@@ -1,0 +1,11 @@
+Site sem proteção - Mostrar as palavras passes em plainText
+Site com proteção - tudo com saneamento de código, e com jwt
+
+o site sem proteção vai servir para se ver pelo wireshark a informação a passar descriptada.
+o site com proteção vai servir para se ver pelo wireshark a informação a passar encriptada.
+
+Site sem proteção com vulnerabilidade de SQL Injection
+Site com proteção sem vulnerabilidade de SQL Injection.
+
+
+O objetivo do projeto é mostrar como um sistema de login sem proteção em tao vulnerável, para tal eu fiz 2 soluções, uma sem qualquer proteção e outra com proteção, utilizando o JWT e o Saneamento de código.
