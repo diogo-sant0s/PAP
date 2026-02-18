@@ -12,21 +12,21 @@ class Login(Base):
     __tablename__ = "Login"
 
     id = Column(String, primary_key=True)
-    email = Column(String, unique=True, nullable=False)
+    username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
 
 
 Base.metadata.create_all(bind=db)
 
 # Create default admin user if it does not exist
-DEFAULT_ADMIN_EMAIL = "admin"
+DEFAULT_ADMIN_USERNAME = "admin"
 DEFAULT_ADMIN_PASSWORD = "1234"
 
-existing_admin = session.query(Login).filter_by(email=DEFAULT_ADMIN_EMAIL).first()
+existing_admin = session.query(Login).filter_by(username=DEFAULT_ADMIN_USERNAME).first()
 if not existing_admin:
     admin_user = Login(
-        id=str(uuid.uuid4()),
-        email=DEFAULT_ADMIN_EMAIL,
+        id=1,
+        username=DEFAULT_ADMIN_USERNAME,
         password=DEFAULT_ADMIN_PASSWORD,
     )
     session.add(admin_user)
