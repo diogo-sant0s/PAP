@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Dashboard</h2>
+
+<h3>Bem-vindo, {{nome | safe}}</h3>
+
+<a href="/logout">
+    <button>Logout</button>
+</a>
+
+{% endblock %}

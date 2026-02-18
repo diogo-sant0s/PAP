@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+  <div class="form-section active" id="loginForm">
+    <h2>Login</h2>
+
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+
+    <form method="POST" action="/login">
+      <input name="login_input" type="text" placeholder="Utilizador" required />
+      <input
+        name="password_input"
+        type="password"
+        placeholder="Password"
+        required
+      />
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
