@@ -1,7 +1,5 @@
-from sqlalchemy import create_engine, Column, String, inspect, DateTime, Integer, ForeignKey
-from sqlalchemy.orm import sessionmaker, declarative_base, relationship
-from sqlalchemy import UniqueConstraint
-import datetime
+from sqlalchemy import create_engine, Column, String
+from sqlalchemy.orm import sessionmaker, declarative_base
 import uuid
 
 db = create_engine('sqlite:///database.db', echo=False)
@@ -10,18 +8,31 @@ session = Session()
 
 Base = declarative_base()
 
-class Users(Base):
-    __tablename__ = "Users"
-    __table_args__= (UniqueConstraint("email", name="uq_email"),)
+class Login(Base):
+    __tablename__ = "Login"
 
-    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    email = Column(String, unique=True, nullable=False)
+    id = Column(String, primary_key=True)
+    username = Column(String, unique=True, nullable=False)
     password = Column(String, nullable=False)
 
 
 Base.metadata.create_all(bind=db)
 
-# Inspect columns
-inspector = inspect(db)
-columns = [col['name'] for col in inspector.get_columns('Users')]
-print(columns)
+# Create default admin user if it does not exist
+DEFAULT_ADMIN_USERNAME = "admin"
+DEFAULT_ADMIN_PASSWORD = "1234"
+
+existing_admin = session.query(Login).filter_by(username=DEFAULT_ADMIN_USERNAME).first()
+if not existing_admin:
+    admin_user = Login(
+        id=1,
+        username=DEFAULT_ADMIN_USERNAME,
+        password=DEFAULT_ADMIN_PASSWORD,
+    )
+    session.add(admin_user)
+    session.commit()
+    print("Default admin user created with user admin and password 1234.")
+else:
+    print("Default admin user already exists.")
+
+print("Database created successfully!")

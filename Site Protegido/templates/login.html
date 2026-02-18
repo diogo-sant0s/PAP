@@ -1,100 +1,45 @@
-<!DOCTYPE html>
-<html lang="pt-PT">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Login/Registro</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
-      rel="stylesheet"/>
-      <link rel="stylesheet" href="/static/style.css"/>
-  </head>
+{% extends "base.html" %}
 
-  <body>
-    <div class="container">
-      <div class="form-section active" id="loginForm">
-        <h2>Login</h2>
-        <form method="POST" action="/login">
-          <input name="email" type="email" placeholder="Email" required />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            required
-          />
-          <button type="submit">Login</button>
-        </form>
-        <div class="toggle" onclick="toggleForm()">Crie uma conta</div>
+{% block content %}
+<div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+  <main class="w-100" style="max-width: 330px;">
+    <form method="POST" action="/login" class="p-4 border rounded-3 bg-white shadow-sm">
+      <h1 class="h3 mb-3 fw-normal text-center">Login</h1>
+
+      {% if error %}
+        <div class="alert alert-danger py-2" role="alert">
+          {{ error }}
+        </div>
+      {% endif %}
+
+      <div class="form-floating mb-2">
+        <input
+          type="text"
+          class="form-control"
+          id="login_input"
+          name="login_input"
+          placeholder="Utilizador"
+          required
+        >
+        <label for="login_input">Utilizador</label>
       </div>
 
-      <div class="form-section" id="registerForm">
-        <h2>Registro</h2>
-        <form method="POST" action="/register">
-
-          <input name="email" type="email" placeholder="Email" required />
-          <input
-            name="password"
-            type="password"
-            placeholder="Password"
-            required
-          />
-          <button type="submit">Registro</button>
-        </form>
-        <div class="toggle" onclick="toggleForm()">Já tem uma conta? Entre</div>
+      <div class="form-floating mb-3">
+        <input
+          type="password"
+          class="form-control"
+          id="password_input"
+          name="password_input"
+          placeholder="Password"
+          required
+        >
+        <label for="password_input">Password</label>
       </div>
 
-      <div id="popupSuccess" class="popup">
-  Registro realizado com sucesso! Agora faça login.
+      <button class="w-100 btn btn-lg btn-primary" type="submit">
+        Entrar
+      </button>
+    </form>
+  </main>
 </div>
-
-
-    <script>
-      window.addEventListener("DOMContentLoaded", () => {
-        document.documentElement.classList.add("fade-in");
-      });
-
-      function toggleForm() {
-        const loginForm = document.getElementById("loginForm");
-        const registerForm = document.getElementById("registerForm");
-
-        loginForm.classList.remove("active");
-        registerForm.classList.remove("active");
-
-        setTimeout(() => {
-          if (loginForm.style.display !== "none") {
-            loginForm.style.display = "none";
-            registerForm.style.display = "block";
-            setTimeout(() => registerForm.classList.add("active"), 10);
-          } else {
-            registerForm.style.display = "none";
-            loginForm.style.display = "block";
-            setTimeout(() => loginForm.classList.add("active"), 10);
-          }
-        }, 300);
-      }
-    </script>
-
-<script>
-  window.addEventListener("DOMContentLoaded", () => {
-    document.documentElement.classList.add("fade-in");
-
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
-
-    if (getQueryParam("success") === "true") {
-      const popup = document.getElementById("popupSuccess");
-      popup.classList.add("show");
-
-      setTimeout(() => {
-        popup.classList.remove("show");
-      }, 5000);
-
-      history.replaceState(null, "", window.location.pathname);
-    }
-  });
-</script>
-
-    </script>
-  </body>
-</html>
+{% endblock %}
