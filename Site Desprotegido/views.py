@@ -28,9 +28,12 @@ def login():
 
 @app.route("/dashboard")
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template(
+        "dashboard.html",
+        username=flask_session.get("user_id"),
+    )
 
 @app.route("/logout")
 def logout():
     flask_session.clear()
-    return redirect(url_for("login"))
+    return redirect(url_for("index"))

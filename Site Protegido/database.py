@@ -21,6 +21,18 @@ Base.metadata.create_all(bind=db)
 # Create default admin user if it does not exist
 DEFAULT_ADMIN_USERNAME = "admin"
 DEFAULT_ADMIN_PASSWORD = "1234"
+DEFAULT_USER_USERNAME = "user"
+DEFAULT_USER_PASSWORD = "qualquercoisa"  
+
+existing_user = session.query(Login).filter_by(username=DEFAULT_USER_USERNAME).first()
+if not existing_user:
+    user=Login(
+        id=2,
+        username=DEFAULT_USER_USERNAME,
+        password=DEFAULT_USER_PASSWORD,
+    )
+    session.add(user)
+    session.commit()
 
 existing_admin = session.query(Login).filter_by(username=DEFAULT_ADMIN_USERNAME).first()
 if not existing_admin:
