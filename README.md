@@ -19,7 +19,7 @@ Ambos incluem:
 - `views.py` — rotas (`/`, `/login`, `/dashboard`, `/logout`) e lógica de autenticação.
 - `database.py` — modelo `Login`, criação da BD SQLite e utilizador padrão.
 - `templates/` — páginas HTML (`base.html`, `login.html`, `dashboard.html`).
-- `static/style.css` — estilos.
+- `static/img` — logo.
 - `requirements.txt` — dependências.
 
 ---
