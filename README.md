@@ -37,25 +37,8 @@ Ao arrancar a aplicação, é criado um utilizador por defeito (se ainda não ex
 
 > Podes executar **um site de cada vez** (cada pasta tem a sua própria aplicação).
 
-### 1) Criar ambiente virtual (recomendado)
 
-No terminal, dentro de **cada pasta** (`Site Protegido` ou `Site Desprotegido`):
-
-```bash
-python -m venv .venv
-# Windows
-.venv\Scripts\activate
-# Linux/macOS
-source .venv/bin/activate
-```
-
-### 2) Instalar dependências
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3) Executar o servidor
+### 1) Executar o servidor
 
 ```bash
 python main.py
