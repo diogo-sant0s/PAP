@@ -91,7 +91,7 @@ O código deste projeto **segue essa abordagem segura**, usando o SQLAlchemy com
 
 ---
 
-## XSS (Cross-Site Scripting) – conceito
+## XSS (Cross-Side Scripting) – conceito
 
 Também apenas em teoria:
 
@@ -104,20 +104,5 @@ No projeto atual:
 - As páginas são simples e **não imprimem conteúdo vindo de outros utilizadores**, por isso não se demonstra XSS aqui.
 
 ---
-
-## Resumo para o relatório/trabalho
-
-1. O projeto implementa um **login simples** com Flask e SQLAlchemy.
-2. Existe um **utilizador padrão** (`admin` / `1234`) criado automaticamente na base de dados.
-3. O login é feito com **SQLAlchemy ORM**, que:
-   - converte o acesso em queries parametrizadas,
-   - não concatena diretamente o texto do utilizador dentro da string SQL.
-4. Em teoria, um login vulnerável a SQL Injection faria:
-   - **concatenação de strings** para formar a query SQL,
-   - permitindo que o utilizador alterasse a lógica do `WHERE`.
-5. Este projeto mostra **a abordagem segura**, adequada para explicar em contexto escolar a diferença entre:
-   - “construir SQL à mão e vulnerável” (conceito),
-   - versus “usar parâmetros/ORM” (código efetivamente usado aqui).
-
 # PAP
 Projeto para a Prova de Aptidão Profissional
