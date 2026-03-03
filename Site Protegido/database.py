@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine, Column, String
 from sqlalchemy.orm import sessionmaker, declarative_base
+from werkzeug.security import generate_password_hash
 import uuid
 
 db = create_engine('sqlite:///database.db', echo=False)
@@ -18,7 +19,6 @@ class Login(Base):
 
 Base.metadata.create_all(bind=db)
 
-# Create default admin user if it does not exist
 DEFAULT_ADMIN_USERNAME = "admin"
 DEFAULT_ADMIN_PASSWORD = "1234"
 DEFAULT_USER_USERNAME = "user"
@@ -29,7 +29,7 @@ if not existing_user:
     user=Login(
         id=2,
         username=DEFAULT_USER_USERNAME,
-        password=DEFAULT_USER_PASSWORD,
+        password=generate_password_hash(DEFAULT_USER_PASSWORD),
     )
     session.add(user)
     session.commit()
@@ -39,7 +39,7 @@ if not existing_admin:
     admin_user = Login(
         id=1,
         username=DEFAULT_ADMIN_USERNAME,
-        password=DEFAULT_ADMIN_PASSWORD,
+        password=generate_password_hash(DEFAULT_ADMIN_PASSWORD),
     )
     session.add(admin_user)
     session.commit()

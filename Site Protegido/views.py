@@ -1,7 +1,7 @@
 from database import session as db_session, Login
 from flask import render_template, request, redirect, url_for, session as flask_session, flash
 from main import app
-from sqlalchemy import text
+from werkzeug.security import check_password_hash, generate_password_hash
 
 @app.route("/")
 def index():
@@ -13,11 +13,9 @@ def login():
         login_input = request.form.get("login_input")
         password_input = request.form.get("password_input")
 
-        # Proteção contra SQL Injection: usando queries parametrizadas
-        query = text("SELECT * FROM Login WHERE username = :username AND password = :password")
-        result = db_session.execute(query, {"username": login_input, "password": password_input}).fetchone()
+        user = db_session.query(Login).filter_by(username=login_input).first()
 
-        if result:
+        if user and check_password_hash(user.password, password_input):
             flask_session["user_id"] = login_input
             return redirect(url_for('dashboard'))
         else:
