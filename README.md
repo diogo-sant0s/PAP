@@ -1,99 +1,127 @@
-# PAP — Demonstração de Login (Flask) com e sem SQL Injection
+## Projeto de Login (Ambiente Escolar)
 
-Projeto da **Prova de Aptidão Profissional (PAP)** que demonstra, em contexto escolar, a diferença entre um **login vulnerável** (SQL Injection) e um **login protegido** (queries parametrizadas).
+Este projeto é um exemplo simples de aplicação Flask com autenticação, pensado apenas para **aprendizagem em ambiente escolar**.
 
-> **Aviso (uso educativo):** este repositório existe apenas para fins de **aprendizagem**. Não uses o “Site Desprotegido” em produção.
+O objetivo principal é:
 
----
-
-## O que existe aqui
-
-Este repositório contém **duas versões** da mesma aplicação Flask:
-
-- **`Site Desprotegido/`** — login **vulnerável** (constrói SQL por concatenação de strings).
-- **`Site Protegido/`** — login **protegido** (usa parâmetros/queries parametrizadas com SQLAlchemy).
-
-Ambos incluem:
-
-- `main.py` — inicializa e executa o servidor Flask.
-- `views.py` — rotas (`/`, `/login`, `/dashboard`, `/logout`) e lógica de autenticação.
-- `database.py` — modelo `Login`, criação da BD SQLite e utilizador padrão.
-- `templates/` — páginas HTML (`base.html`, `login.html`, `dashboard.html`).
-- `static/img` — logo.
-- `requirements.txt` — dependências.
+- Mostrar **como funciona um login básico** com base de dados.
+- Explicar, em teoria, **o que seria um login vulnerável a SQL Injection**.
+- Mostrar **como o código atual evita esse tipo de vulnerabilidade**, usando SQLAlchemy (ORM) e consultas parametrizadas.
 
 ---
 
-## Utilizador padrão (para testes)
+## Tecnologias usadas
 
-Ao arrancar a aplicação, é criado um utilizador por defeito (se ainda não existir):
-
-- **Username:** `admin`
-- **Password:** `1234`
-
----
-
-## Como executar
-
-> Podes executar **um site de cada vez** (cada pasta tem a sua própria aplicação).
-
-
-### 1) Executar o servidor
-
-```bash
-python main.py
-```
-
-Por omissão, o projeto arranca em:
-
-- `http://localhost:5000`
+- **Python 3**
+- **Flask**
+- **Flask-Session**
+- **SQLAlchemy** (ORM para aceder à base de dados)
+- **SQLite** (`database.db`)
 
 ---
 
-## Diferença principal: vulnerável vs protegido
+## Estrutura principal
 
-### Site Desprotegido — **vulnerável a SQL Injection**
+- `main.py` – cria a aplicação Flask e arranca o servidor.
+- `database.py` – configuração da base de dados e modelo `Login`, além de criar o utilizador padrão.
+- `views.py` – rotas `/`, `/login`, `/dashboard` e `/logout`.
+- `templates/` – páginas HTML (`login.html`, `dashboard.html`, `base.html`).
+- `static/style.css` – estilos da interface.
 
-No `Site Desprotegido/views.py`, a query é construída juntando diretamente o input do utilizador numa string SQL, por exemplo:
+---
+
+## Utilizador padrão para testes
+
+Ao iniciar a aplicação, o ficheiro `database.py` garante a criação de um utilizador por defeito:
+
+- **Utilizador (campo `email`)**: `admin`
+- **Password**: `1234`
+
+Este utilizador é criado apenas se ainda não existir na base de dados.
+
+---
+
+## Como funciona o login seguro (no projeto)
+
+No ficheiro `views.py`, a rota de login lê os dados do formulário e usa o SQLAlchemy para procurar o utilizador:
 
 ```python
-query = f"SELECT * FROM login WHERE username = '{login_input}' AND password = '{password_input}'"
-result = db_session.execute(text(query)).fetchone()
+email = request.form.get('email', '').lower().strip()
+password = request.form.get('password', '')
+
+user = db_session.query(Login).filter_by(email=email).first()
+
+if user and password and user.password == password:
+    flask_session['user_id'] = user.id
+    return redirect(url_for('dashboard'))
 ```
 
-Isto é perigoso porque permite que o utilizador **altere a lógica do `WHERE`** ao injetar caracteres especiais/SQL.
+Em termos de SQL, o ORM converte isto num comando do género:
 
-### Site Protegido — **proteção com parâmetros**
+- `SELECT * FROM Login WHERE email = :email`
 
-No `Site Protegido/views.py`, a query usa **placeholders** e os valores são passados como **parâmetros**:
+O ponto importante é que:
 
-```python
-query = text("SELECT * FROM Login WHERE username = :username AND password = :password")
-result = db_session.execute(query, {"username": login_input, "password": password_input}).fetchone()
-```
+- O valor que o utilizador escreveu **não é colado diretamente na string SQL**.
+- Em vez disso, é passado como **parâmetro** (`:email`), o que impede que o utilizador consiga “partir” a query com código SQL malicioso.
 
-Aqui, o input do utilizador **não é concatenado** na string SQL: é enviado separadamente como parâmetro, o que ajuda a evitar SQL Injection.
+Isto é a base de uma **consulta parametrizada**, que é a forma correta de evitar SQL Injection.
 
 ---
 
-## Notas sobre ficheiros incluídos
+## SQL Injection (conceito teórico)
 
-- `database.db` é uma base de dados **SQLite** local (fica dentro de cada pasta do site).
-- `flask_session/` guarda sessões no sistema de ficheiros (pode ser apagado sem problemas — é recriado).
-- `__pycache__/` são ficheiros gerados pelo Python (podem ser ignorados no versionamento).
+> **Atenção:**  
+> Esta secção é apenas explicativa.  
+> O projeto **não implementa** este tipo de código vulnerável.
+
+**SQL Injection** acontece quando:
+
+- O programa **constrói a query SQL juntando diretamente o texto escrito pelo utilizador** dentro da string SQL.
+- Por exemplo, em vez de usar parâmetros, a aplicação faria algo “do tipo”:  
+  “pegar no username que o utilizador escreveu” + “colar dentro do `WHERE` da query”.
+
+Assim, se o utilizador escreve texto especial (por exemplo com aspas e operadores lógicos), pode:
+
+- alterar a condição do `WHERE`,
+- ou até terminar o comando e injetar outro.
+
+Para evitar isso, usa-se sempre:
+
+- **ORMs** (como o SQLAlchemy, que já parametriza por nós), ou
+- **queries parametrizadas** (em que o SQL é fixo e os valores vêm em parâmetros separados).
+
+O código deste projeto **segue essa abordagem segura**, usando o SQLAlchemy com `filter_by(...)`.
 
 ---
 
-## Licença
+## XSS (Cross-Site Scripting) – conceito
 
-Este projeto inclui um ficheiro `LICENSE` (ver repositório).
+Também apenas em teoria:
+
+- XSS acontece quando um site **mostra diretamente conteúdo HTML/JavaScript vindo do utilizador** sem escapar.
+- Em Flask, o motor de templates Jinja2 faz, por defeito, o “escape” de variáveis (`{{ variavel }}`), o que ajuda a evitar XSS.
+- Só quando se usa o filtro `|safe` é que se diz ao template para confiar totalmente no conteúdo (e isso pode ser perigoso se o texto vier de utilizadores).
+
+No projeto atual:
+
+- As páginas são simples e **não imprimem conteúdo vindo de outros utilizadores**, por isso não se demonstra XSS aqui.
 
 ---
 
-## Autor / Contexto
+## Resumo para o relatório/trabalho
 
-Projeto desenvolvido para a **PAP**, com objetivo de explicar:
+1. O projeto implementa um **login simples** com Flask e SQLAlchemy.
+2. Existe um **utilizador padrão** (`admin` / `1234`) criado automaticamente na base de dados.
+3. O login é feito com **SQLAlchemy ORM**, que:
+   - converte o acesso em queries parametrizadas,
+   - não concatena diretamente o texto do utilizador dentro da string SQL.
+4. Em teoria, um login vulnerável a SQL Injection faria:
+   - **concatenação de strings** para formar a query SQL,
+   - permitindo que o utilizador alterasse a lógica do `WHERE`.
+5. Este projeto mostra **a abordagem segura**, adequada para explicar em contexto escolar a diferença entre:
+   - “construir SQL à mão e vulnerável” (conceito),
+   - versus “usar parâmetros/ORM” (código efetivamente usado aqui).
 
-- como funciona um login simples com Flask;
-- o conceito de SQL Injection;
-- e como a parametrização/ORM ajuda a mitigar este tipo de vulnerabilidade.
+# PAP
+Projeto para a Prova de Aptidão Profissional
