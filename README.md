@@ -71,10 +71,6 @@ Isto é a base de uma **consulta parametrizada**, que é a forma correta de evit
 
 ## SQL Injection (conceito teórico)
 
-> **Atenção:**  
-> Esta secção é apenas explicativa.  
-> O projeto **não implementa** este tipo de código vulnerável.
-
 **SQL Injection** acontece quando:
 
 - O programa **constrói a query SQL juntando diretamente o texto escrito pelo utilizador** dentro da string SQL.
