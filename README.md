@@ -160,5 +160,4 @@ developers can significantly reduce the risk of exploitation.
 
 **Diogo Manuel Vieira Dos Santos**
 
-Professional Course – Computer Equipment Management Technician  
 Miguel Torga Secondary School
