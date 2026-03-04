@@ -30,24 +30,6 @@ The objective is to show how poor coding practices can compromise a system and h
 
 ---
 
-# 🖥️ Demo
-
-## Login Page
-
-![Login Screenshot](images/login.png)
-
-## Dashboard Access
-
-![Dashboard Screenshot](images/dashboard.png)
-
-## Attack Demonstration
-
-![SQL Injection Demo](images/demo.gif)
-
-*(Add your screenshots and GIF inside a folder called `images` in the repository)*
-
----
-
 # ⚙️ Technologies Used
 
 ### Frontend
