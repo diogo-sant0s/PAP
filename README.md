@@ -1,108 +1,182 @@
-## Projeto de Login (Ambiente Escolar)
 
-Este projeto é um exemplo simples de aplicação Flask com autenticação, pensado apenas para **aprendizagem em ambiente escolar**.
+# 🔐 SecureAuth
 
-O objetivo principal é:
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
+![Flask](https://img.shields.io/badge/Flask-Web_Framework-black?logo=flask)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-ORM-red)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-Frontend-purple?logo=bootstrap)
+![Security](https://img.shields.io/badge/Security-SQL_Injection%20%7C%20XSS-orange)
+![License](https://img.shields.io/badge/Project-PAP-green)
 
-- Mostrar **como funciona um login básico** com base de dados.
-- Explicar, em teoria, **o que seria um login vulnerável a SQL Injection**.
-- Mostrar **como o código atual evita esse tipo de vulnerabilidade**, usando SQLAlchemy (ORM) e consultas parametrizadas.
+SecureAuth is a web application developed as part of the **Professional Aptitude Project (PAP)** for the **Computer Equipment Management Technician** course.
 
----
-
-## Tecnologias usadas
-
-- **Python 3**
-- **Flask**
-- **Flask-Session**
-- **SQLAlchemy** (ORM para aceder à base de dados)
-- **SQLite** (`database.db`)
+The project demonstrates the difference between a **vulnerable authentication system** and a **secure authentication system**, focusing on common web security vulnerabilities such as **SQL Injection** and **Cross‑Site Scripting (XSS)**.
 
 ---
 
-## Estrutura principal
+# 📌 Project Overview
 
-- `main.py` – cria a aplicação Flask e arranca o servidor.
-- `database.py` – configuração da base de dados e modelo `Login`, além de criar o utilizador padrão.
-- `views.py` – rotas `/`, `/login`, `/dashboard` e `/logout`.
-- `templates/` – páginas HTML (`login.html`, `dashboard.html`, `base.html`).
-- `static/style.css` – estilos da interface.
+Modern web applications store sensitive data such as login credentials and personal information.  
+However, improper handling of user input can introduce vulnerabilities.
 
----
+This project demonstrates:
 
-## Utilizador padrão para testes
+- A **vulnerable login system**
+- A **secure login system**
+- **SQL Injection authentication bypass**
+- A scenario where **SQL Injection leads to XSS**
 
-Ao iniciar a aplicação, o ficheiro `database.py` garante a criação de um utilizador por defeito:
-
-- **Utilizador (campo `email`)**: `admin`
-- **Password**: `1234`
-
-Este utilizador é criado apenas se ainda não existir na base de dados.
+The objective is to show how poor coding practices can compromise a system and how secure development techniques can prevent these attacks.
 
 ---
 
-## Como funciona o login seguro (no projeto)
+# 🖥️ Demo
 
-No ficheiro `views.py`, a rota de login lê os dados do formulário e usa o SQLAlchemy para procurar o utilizador:
+## Login Page
 
-```python
-email = request.form.get('email', '').lower().strip()
-password = request.form.get('password', '')
+![Login Screenshot](images/login.png)
 
-user = db_session.query(Login).filter_by(email=email).first()
+## Dashboard Access
 
-if user and password and user.password == password:
-    flask_session['user_id'] = user.id
-    return redirect(url_for('dashboard'))
+![Dashboard Screenshot](images/dashboard.png)
+
+## Attack Demonstration
+
+![SQL Injection Demo](images/demo.gif)
+
+*(Add your screenshots and GIF inside a folder called `images` in the repository)*
+
+---
+
+# ⚙️ Technologies Used
+
+### Frontend
+- HTML
+- Bootstrap
+
+### Backend
+- Python
+- Flask
+
+### Database
+- SQLAlchemy
+
+Flask handles the web server and application logic, while SQLAlchemy manages database interaction.
+
+---
+
+# 🏗️ System Architecture
+
+The application follows a **Client–Server architecture**.
+
+```
+User (Browser)
+      │
+      ▼
+Flask Web Server
+      │
+      ▼
+Database (SQLAlchemy)
 ```
 
-Em termos de SQL, o ORM converte isto num comando do género:
-
-- `SELECT * FROM Login WHERE email = :email`
-
-O ponto importante é que:
-
-- O valor que o utilizador escreveu **não é colado diretamente na string SQL**.
-- Em vez disso, é passado como **parâmetro** (`:email`), o que impede que o utilizador consiga “partir” a query com código SQL malicioso.
-
-Isto é a base de uma **consulta parametrizada**, que é a forma correta de evitar SQL Injection.
+The user sends HTTP requests to the Flask server, which processes the request and communicates with the database before returning a response.
 
 ---
 
-## SQL Injection (conceito teórico)
+# 🔑 Authentication Flow
 
-**SQL Injection** acontece quando:
+The login system can be represented by a simple **state machine**:
 
-- O programa **constrói a query SQL juntando diretamente o texto escrito pelo utilizador** dentro da string SQL.
-- Por exemplo, em vez de usar parâmetros, a aplicação faria algo “do tipo”:  
-  “pegar no username que o utilizador escreveu” + “colar dentro do `WHERE` da query”.
+1. **Initial State**
+   - User accesses the login page
 
-Assim, se o utilizador escreve texto especial (por exemplo com aspas e operadores lógicos), pode:
+2. **Validation State**
+   - Server checks credentials
 
-- alterar a condição do `WHERE`,
-- ou até terminar o comando e injetar outro.
+3. **Authenticated State**
+   - Access to dashboard granted
 
-Para evitar isso, usa-se sempre:
+4. **Error State**
+   - Invalid credentials or blocked attack
 
-- **ORMs** (como o SQLAlchemy, que já parametriza por nós), ou
-- **queries parametrizadas** (em que o SQL é fixo e os valores vêm em parâmetros separados).
-
-O código deste projeto **segue essa abordagem segura**, usando o SQLAlchemy com `filter_by(...)`.
+In the vulnerable system, manipulated input may force authentication even without valid credentials.
 
 ---
 
-## XSS (Cross-Side Scripting) – conceito
+# 💥 Security Demonstrations
 
-Também apenas em teoria:
+## SQL Injection
 
-- XSS acontece quando um site **mostra diretamente conteúdo HTML/JavaScript vindo do utilizador** sem escapar.
-- Em Flask, o motor de templates Jinja2 faz, por defeito, o “escape” de variáveis (`{{ variavel }}`), o que ajuda a evitar XSS.
-- Só quando se usa o filtro `|safe` é que se diz ao template para confiar totalmente no conteúdo (e isso pode ser perigoso se o texto vier de utilizadores).
+SQL Injection occurs when user input is directly inserted into an SQL query.
 
-No projeto atual:
+Example attack:
 
-- As páginas são simples e **não imprimem conteúdo vindo de outros utilizadores**, por isso não se demonstra XSS aqui.
+```
+' OR '1'='1
+```
+
+This makes the SQL condition always true and allows authentication bypass.
 
 ---
-# PAP
-Projeto para a Prova de Aptidão Profissional
+
+## SQL Injection Leading to XSS
+
+The project also demonstrates a scenario where SQL Injection injects malicious HTML/JavaScript into the page.
+
+Example payload:
+
+```
+' UNION SELECT '1','<script>alert("XSS")</script>','3' --
+```
+
+Possible consequences:
+
+- JavaScript execution in the user's browser
+- Cookie or session theft
+- Malicious redirections
+- Actions performed on behalf of the user
+
+---
+
+# 🧪 Testing
+
+The project includes several types of testing:
+
+- Functional tests
+- Security tests
+- Comparison between vulnerable and secure systems
+
+These tests demonstrate how the secure implementation prevents SQL Injection.
+
+---
+
+# 🚀 Possible Improvements
+
+Future improvements could include:
+
+- Password hashing
+- Login attempt rate limiting
+- Multi‑factor authentication
+
+---
+
+# 📚 Learning Outcomes
+
+This project demonstrates that small programming mistakes can lead to serious security vulnerabilities.
+
+By applying secure practices such as:
+
+- Parameterized queries
+- Input validation
+- Secure data handling
+
+developers can significantly reduce the risk of exploitation.
+
+---
+
+# 👨‍💻 Author
+
+**Diogo Manuel Vieira Dos Santos**
+
+Professional Course – Computer Equipment Management Technician  
+Miguel Torga Secondary School
